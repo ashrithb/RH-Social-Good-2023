@@ -1,6 +1,7 @@
-const fs = require("fs");
-const express = require("express");
+import fs from "fs";
+import express from "express";
 const app = express();
+import { esgSummary } from "./openai.mjs";
 
 const bin = fs.readFileSync("./data.json");
 const { keys, averageBySector, sectors, tickers } = JSON.parse(bin);
@@ -22,13 +23,34 @@ app.get("/esg/:ticker", (req, res) => {
 		const sector = obj["Sector"];
 
 		res.json({
-			totalScore: T,
-			environmental: E,
-			governance: G,
-			social: S,
-			controversy: C,
-			sectorAverage: averageBySector[sector],
-			topCompanies: sectors[sector],
+			data: {
+				totalScore: T,
+				environmental: E,
+				governance: G,
+				social: S,
+				controversy: C,
+				sectorAverage: averageBySector[sector],
+				topCompanies: sectors[sector],
+			},
+		});
+	} else {
+		res.json({
+			data: null,
+		});
+	}
+});
+
+app.get("/esg/summary/:ticker", async (req, res) => {
+	let { ticker } = req.params;
+	ticker = ticker.toUpperCase();
+
+	console.log(`Got summary request! Ticker: ${ticker}`);
+	const obj = tickers[ticker];
+	if (obj) {
+		const companyName = obj["Name"];
+		const summary = await esgSummary(companyName);
+		res.json({
+			data: { summary },
 		});
 	} else {
 		res.json({

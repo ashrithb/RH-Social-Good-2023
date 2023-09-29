@@ -26,14 +26,14 @@ with open("./SP 500 ESG Risk Ratings.csv","r") as csvfile:
 
         tickers[obj['Symbol']] = obj
 
-        for key in ['Symbol', 'Name', 'Address','Industry', 'Full Time Employees', 'Description']:
+        for key in ['Symbol', 'Address','Industry', 'Full Time Employees', 'Description']:
             del obj[key]
   
     
 for sector in sectors.keys():
     sectors[sector].sort(key=lambda x: x[0] + (1000 if x[0] == -1 else 0))
 
-averageBySector = defaultdict(int)
+averageBySector = defaultdict(float)
 
 for sector, vals in sectors.items():
     valid = [x[0] for x in vals if x[0] != -1]
