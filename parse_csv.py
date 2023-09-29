@@ -2,7 +2,7 @@ import csv
 import json
 from collections import defaultdict
 
-data = []
+tickers = defaultdict(list)
 sectors = defaultdict(list)
 keys = ['Symbol', 'Name', 'Address', 'Sector', 'Industry', 'Full Time Employees', 'Description', 'Total ESG Risk score', 'Environment Risk Score', 'Governance Risk Score', 'Social Risk Score', 'Controversy Level', 'Controversy Score', 'ESG Risk Percentile', 'ESG Risk Level']
 
@@ -13,26 +13,40 @@ with open("./SP 500 ESG Risk Ratings.csv","r") as csvfile:
         c += 1
         if not c: continue
         obj = dict(zip(keys,row))
+
+        for key in ['Total ESG Risk score', 'Environment Risk Score', 'Governance Risk Score', 'Social Risk Score', 'Controversy Score']:
+            if obj[key]:
+                obj[key] = float(obj[key])
+            else:
+                obj[key] = -1
         
         if obj['Sector'] and obj['Total ESG Risk score']:
-            t = (int(obj['Total ESG Risk score']), obj['Symbol'])
+            t = (obj['Total ESG Risk score'], obj['Symbol'])
             sectors[obj['Sector']].append(t)
 
-        data.append(obj)
+        tickers[obj['Symbol']] = obj
+
+        for key in ['Symbol', 'Name', 'Address','Industry', 'Full Time Employees', 'Description']:
+            del obj[key]
   
     
 for sector in sectors.keys():
-    sectors[sector].sort(key=lambda x: x[0])
+    sectors[sector].sort(key=lambda x: x[0] + (1000 if x[0] == -1 else 0))
 
 averageBySector = defaultdict(int)
 
 for sector, vals in sectors.items():
-    t = sum([x[0] for x in vals])
-    averageBySector[sector] = t / len(vals)
-
-
-f = open("./data.json", "w")
+    valid = [x[0] for x in vals if x[0] != -1]
+    if valid:
+        averageBySector[sector] = sum(valid) / len(valid)
+    else: 
+        averageBySector[sector] = -1
+for k,v in tickers.items():
+    print(k)
+    print(v)
+    print("\n\n")
+f = open("./server/data.json", "w")
 f.write(json.dumps(
-    {"keys": keys, "averageBySector": averageBySector, "sectors": sectors, "data": data}
+    {"averageBySector": averageBySector, "sectors": sectors, "tickers": tickers}
 ))
 f.close()
