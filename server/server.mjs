@@ -13,7 +13,6 @@ const { averageBySector, sectors, tickers } = JSON.parse(bin);
 const bin2 = fs.readFileSync("./summaries.json");
 const summaries = JSON.parse(bin2);
 
-// const summaries = {};
 // (async () => {
 // 	for (const ticker of Object.keys(tickers)) {
 // 		const companyName = tickers[ticker];
@@ -40,7 +39,7 @@ app.get("/esg/:ticker", (req, res) => {
 				social: obj["social"],
 				sector: sector,
 				sectorAverage: averageBySector[sector], // (E,S,G,T)
-				topCompanies: [], //sectors[sector]
+				topCompanies: sectors[sector].slice(0, 10),
 				summary: summaries[ticker] || "Unknown",
 			},
 		});
@@ -51,24 +50,24 @@ app.get("/esg/:ticker", (req, res) => {
 	}
 });
 
-// app.get("/esg/summary/:ticker", async (req, res) => {
-// 	let { ticker } = req.params;
-// 	ticker = ticker.toUpperCase();
+app.get("/esg/summary/:ticker", async (req, res) => {
+	let { ticker } = req.params;
+	ticker = ticker.toUpperCase();
 
-// 	console.log(`Got summary request! Ticker: ${ticker}`);
-// 	const obj = tickers[ticker];
-// 	if (obj) {
-// 		const companyName = obj["Name"];
-// 		const summary = await esgSummary(companyName);
-// 		res.json({
-// 			data: { summary },
-// 		});
-// 	} else {
-// 		res.json({
-// 			data: null,
-// 		});
-// 	}
-// });
+	console.log(`Got summary request! Ticker: ${ticker}`);
+	const obj = tickers[ticker];
+	if (obj) {
+		const companyName = obj["Name"];
+		const summary = await esgSummary(companyName, ticker);
+		res.json({
+			data: { summary },
+		});
+	} else {
+		res.json({
+			data: null,
+		});
+	}
+});
 
 // app.post("/esg/portfolio", async (req, res) => {
 // 	let { holdings } = req.body; // holdings = {ticker : float, ticker: float} float represents % of portfolio
