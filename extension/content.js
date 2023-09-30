@@ -63,6 +63,29 @@ function getData(ticker) {
   });
 }
 
+function getSummary(ticker) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    url = "https://rh-hackathon.uc.r.appspot.com/esg/summary/" + ticker;
+    xhr.open('GET', url, true);
+
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const responseData = JSON.parse(xhr.responseText);
+        resolve(responseData["data"]);
+      } else {
+        reject(`Request failed with status ${xhr.status}`);
+      }
+    };
+
+    xhr.onerror = function() {
+      reject('Network error');
+    };
+
+    xhr.send();
+  });
+}
+
   
 async function modifyElementContent() {
     try {
@@ -106,16 +129,26 @@ async function modifyElementContent() {
         }
         ticker = url.toLowerCase();
 
-
+        // Fetch data for given company from endpoint
         const data = await getData(ticker);
         envScore = data["environmental"];
         socScore = data["social"];
         govScore = data["governance"];
-        summary = data["summary"];
         sectorAvg = data["sectorAverage"][3];
         sector = data["sector"];
         score = envScore + socScore + govScore;
-        topCompanies = ['A', 'B', 'C', 'D', 'E'];
+        topCompanies = data["topCompanies"];
+
+        if (envScore === undefined){
+          envScore = "No Data";
+          socScore = "No Data";
+          govScore = "No Data";
+          score = "NA";
+        }
+
+        // Fetch summary data from seperate endpoint
+        summary = await getSummary(ticker);
+        summary = summary["summary"];
       
 
 
@@ -196,7 +229,7 @@ async function modifyElementContent() {
         const envValBox = document.createElement('div');
         envValBox.classList.add("css-e7a241");
         // Calculate what percentage of the max envScore is, and adjust its position accordingly
-        const envPercent = ((envScore / 21) * 100);
+        const envPercent = ((envScore / 24) * 100);
         envValBox.style.left = envPercent.toString() + "%";
         envScale.appendChild(envValBox);
 
@@ -231,7 +264,7 @@ async function modifyElementContent() {
         const socValBox = document.createElement('div');
         socValBox.classList.add("css-e7a241");
         // Calculate what percentage of the max envScore is, and adjust its position accordingly
-        const socPercent = ((socScore / 21) * 100);
+        const socPercent = ((socScore / 24) * 100);
         socValBox.style.left = socPercent.toString() + "%";
         socScale.appendChild(socValBox);
 
@@ -266,7 +299,7 @@ async function modifyElementContent() {
         const govValBox = document.createElement('div');
         govValBox.classList.add("css-e7a241");
         // Calculate what percentage of the max envScore is, and adjust its position accordingly
-        const govPercent = ((govScore / 15.5) * 100);
+        const govPercent = ((govScore / 24) * 100);
         govValBox.style.left = govPercent.toString() + "%";
         govScale.appendChild(govValBox);
 
@@ -323,24 +356,39 @@ async function modifyElementContent() {
         ranking.appendChild(rankingList);
 
         const rankOne = document.createElement('li');
-        rankOne.innerHTML = topCompanies[0];
         rankingList.appendChild(rankOne);
+        const linkOne = document.createElement('a');
+        linkOne.href = "https://robinhood.com/stocks/" + topCompanies[0];
+        linkOne.textContent = topCompanies[0]; 
+        rankOne.appendChild(linkOne);
 
         const rankTwo = document.createElement('li');
-        rankTwo.innerHTML = topCompanies[1];
         rankingList.appendChild(rankTwo);
+        const linkTwo = document.createElement('a');
+        linkTwo.href = "https://robinhood.com/stocks/" + topCompanies[1];
+        linkTwo.textContent = topCompanies[1]; 
+        rankTwo.appendChild(linkTwo);
 
         const rankThree = document.createElement('li');
-        rankThree.innerHTML = topCompanies[2];
         rankingList.appendChild(rankThree);
+        const linkThree = document.createElement('a');
+        linkThree.href = "https://robinhood.com/stocks/" + topCompanies[2];
+        linkThree.textContent = topCompanies[2]; 
+        rankThree.appendChild(linkThree);
 
         const rankFour = document.createElement('li');
-        rankFour.innerHTML = topCompanies[3];
         rankingList.appendChild(rankFour);
+        const linkFour = document.createElement('a');
+        linkFour.href = "https://robinhood.com/stocks/" + topCompanies[3];
+        linkFour.textContent = topCompanies[3]; 
+        rankFour.appendChild(linkFour);
 
         const rankFive = document.createElement('li');
-        rankFive.innerHTML = topCompanies[4];
         rankingList.appendChild(rankFive);
+        const linkFive = document.createElement('a');
+        linkFive.href = "https://robinhood.com/stocks/" + topCompanies[4];
+        linkFive.textContent = topCompanies[4]; 
+        rankFive.appendChild(linkFive);
 
 
         prevSection.parentNode.insertBefore(newSection, prevSection);
