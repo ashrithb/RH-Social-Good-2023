@@ -1,10 +1,23 @@
-import fs from "fs";
+import fs, { writeFileSync } from "fs";
 import express from "express";
 const app = express();
 import { esgSummary } from "./openai.mjs";
 
 const bin = fs.readFileSync("./data.json");
+const bin2 = fs.readFileSync("./summaries.json");
 const { keys, averageBySector, sectors, tickers } = JSON.parse(bin);
+const summaries = JSON.parse(bin2);
+
+// const summaries = {};
+// (async () => {
+// 	for (const ticker of Object.keys(tickers)) {
+// 		const companyName = tickers[ticker];
+// 		const m = await esgSummary(ticker);
+// 		summaries[ticker] = m;
+// 		console.log(summaries);
+// 	}
+// 	writeFileSync("./summaries.json", JSON.stringify(summaries));
+// })();
 
 app.get("/esg/:ticker", (req, res) => {
 	let { ticker } = req.params;
@@ -24,6 +37,7 @@ app.get("/esg/:ticker", (req, res) => {
 
 		res.json({
 			data: {
+				summary: summaries[ticker],
 				totalScore: T,
 				environmental: E,
 				governance: G,
@@ -40,7 +54,7 @@ app.get("/esg/:ticker", (req, res) => {
 	}
 });
 
-app.get("/esg/summary/:ticker", async (req, res) => {
+app.get("/esg/news/:ticker", async (req, res) => {
 	let { ticker } = req.params;
 	ticker = ticker.toUpperCase();
 
