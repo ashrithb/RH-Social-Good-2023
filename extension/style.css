@@ -1,59 +1,63 @@
-.css-1xb4h71.label{
-    width: 140px;
+.css-1xb4h71.label {
+	width: 140px;
 }
 
-
-.css-qwhg9q.scale{
-    opacity: 0.5;
-    border-radius: 5px;
-    background: linear-gradient(to right, green, red);
+.css-qwhg9q.scale {
+	border-radius: 5px;
+	background: linear-gradient(
+		to right,
+		hsla(120, 100%, 50%, 1),
+		rgb(255, 0, 0) 60%
+	);
+}
+.css-zjik.text-section {
+	display: flex;
 }
 
-.css-zjik.text-section{
-    display: flex;
+.css-ctwg3s#circle {
+	background-color: darkblue;
+	margin-bottom: 0.5cm;
 }
 
-.css-ctwg3s#circle{
-    background-color:darkblue;
-    margin-bottom: 0.5cm;
+.css-ctwg3s#industry-circle {
+	background-color: darkblue;
 }
 
-.css-ctwg3s#industry-circle{
-    background-color:darkblue;
+#totalScore,
+#circleLabel,
+#industryScore,
+#industryLabel {
+	color: lightblue;
+	font-weight: bold;
 }
 
-#totalScore,#circleLabel,#industryScore,#industryLabel{
-    color:lightblue;
-    font-weight:bold;
+.css-laj9r3#reviewBox {
+	flex: 2;
 }
 
-.css-laj9r3#reviewBox{
-    flex:2;
-}
-
-.css-gosvcs#rankingBox{
-    flex:1;
+.css-gosvcs#rankingBox {
+	flex: 1;
 }
 
 .css-e7a241 {
-    -webkit-box-align: center;
-    align-items: center;
-    display: flex;
-    height: 100%;
-    position: absolute;
-    top: 0px;
+	-webkit-box-align: center;
+	align-items: center;
+	display: flex;
+	height: 100%;
+	position: absolute;
+	top: 0px;
 }
 
 .css-e7a241::after {
-    background: linear-gradient(to right, var(--rh__neutral-bg1), transparent);
-    content: "";
-    height: 100%;
-    pointer-events: none;
-    width: 16px;
+	background: linear-gradient(to right, var(--rh__neutral-bg1), transparent);
+	content: "";
+	height: 100%;
+	pointer-events: none;
+	width: 16px;
 }
 
-.css-1i37pvb.value{
-    color: white;
-    font-weight: bolder;
-    font-size:large;
+.css-1i37pvb.value {
+	color: white;
+	font-weight: bolder;
+	font-size: large;
 }
