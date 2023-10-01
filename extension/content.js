@@ -1,3 +1,5 @@
+console.log("Running esg script");
+
 // Wait for full page to be loaded before querying for elements
 function waitForElement(selector, timeout = 5000) {
 	return new Promise((resolve, reject) => {
@@ -143,10 +145,6 @@ async function modifyElementContent() {
 			govScore = "No Data";
 			score = "NA";
 		}
-
-		// Fetch summary data from seperate endpoint
-		summary = await getSummary(ticker);
-		summary = summary["summary"];
 
 		// Body of ESG section
 		const bodyDiv = document.createElement("div");
@@ -324,13 +322,8 @@ async function modifyElementContent() {
 
 		const reviewHeader = document.createElement("h3");
 		reviewHeader.classList.add("css-v72tci");
-		reviewHeader.innerHTML = "In the News";
+		reviewHeader.innerHTML = "ESG Summary";
 		review.appendChild(reviewHeader);
-
-		const reviewBody = document.createElement("span");
-		reviewBody.classList.add("web-app-emotion-cache-0");
-		reviewBody.innerHTML = summary;
-		review.appendChild(reviewBody);
 
 		// Ranking Section
 		const rankingBox = document.createElement("div");
@@ -344,7 +337,7 @@ async function modifyElementContent() {
 
 		const rankingHeader = document.createElement("h3");
 		rankingHeader.classList.add("css-v72tci");
-		rankingHeader.innerHTML = "Top ESG Companies Within " + sector;
+		rankingHeader.innerHTML = "Top ESG Companies in " + sector + " Sector: ";
 		ranking.appendChild(rankingHeader);
 
 		const rankingList = document.createElement("ol");
@@ -386,7 +379,15 @@ async function modifyElementContent() {
 		linkFive.textContent = topCompanies[4];
 		rankFive.appendChild(linkFive);
 
+		// moved to the bottom to the other elements show up while waiting for this
 		prevSection.parentNode.insertBefore(newSection, prevSection);
+		// Fetch summary data from seperate endpoint
+		summary = await getSummary(ticker);
+		summary = summary["summary"];
+		const reviewBody = document.createElement("span");
+		reviewBody.classList.add("web-app-emotion-cache-0");
+		reviewBody.innerHTML = summary;
+		review.appendChild(reviewBody);
 
 		console.log("Found element:", element);
 	} catch (error) {

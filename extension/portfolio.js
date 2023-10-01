@@ -1,3 +1,4 @@
+console.log("Running portfolio script");
 // Wait for full page to be loaded before querying for elements
 function waitForElement(selector, timeout = 5000) {
 	return new Promise((resolve, reject) => {

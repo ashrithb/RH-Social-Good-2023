@@ -16,6 +16,11 @@
 			"js": ["portfolio.js"],
 			"matches": ["https://robinhood.com/account/investing"],
 			"run_at": "document_end"
+		},
+		{
+			"js": ["cards.js"],
+			"matches": ["https://robinhood.com/*"],
+			"run_at": "document_end"
 		}
 	]
 }
