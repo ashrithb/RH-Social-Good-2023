@@ -40,7 +40,7 @@ app.get("/esg/:ticker", (req, res) => {
 				sector: sector,
 				sectorAverage: averageBySector[sector], // (E,S,G,T)
 				topCompanies: sectors[sector].slice(0, 10),
-				summary: summaries[ticker] || "Unknown",
+				// summary: summaries[ticker] || "Unknown",
 			},
 		});
 	} else {
@@ -69,45 +69,62 @@ app.get("/esg/summary/:ticker", async (req, res) => {
 	}
 });
 
-// app.post("/esg/portfolio", async (req, res) => {
-// 	let { holdings } = req.body; // holdings = {ticker : float, ticker: float} float represents % of portfolio
-// 	if (!holdings) {
-// 		return res.json({ data: null });
-// 	}
-// 	let tscore,
-// 		escore,
-// 		sscore,
-// 		gscore,
-// 		percentage = 0;
+app.post("/esg/portfolio", async (req, res) => {
+	console.log("Got portfolio score request!");
+	let { holdings } = req.body; // holdings = {ticker : float, ticker: float} float represents % of portfolio
+	if (!holdings) {
+		return res.json({ data: null });
+	}
+	let [tscore, escore, sscore, gscore, percentage] = [0, 0, 0, 0, 0];
 
-// 	for (let ticker in holdings) {
-// 		if (tickers[ticker] && tickers[tickers][total] != -1) {
-// 			escore += holdings[ticker] * tickers[ticker]["environmental"];
-// 			sscore += holdings[ticker] * tickers[ticker]["social"];
-// 			gscore += holdings[ticker] * tickers[ticker]["governance"];
-// 			tscore += holdings[ticker] * tickers[ticker]["total"];
-// 			percentage += holdings[ticker];
-// 		}
-// 	}
+	for (let ticker in holdings) {
+		if (!(ticker in tickers)) {
+			continue;
+		}
+		const sector = tickers[ticker]["sector"];
+		// console.log(tickers[ticker]["total"], averageBySector[sector]);
 
-// 	recip = percentage ? 1 / percentage : 1;
-// 	tscore,
-// 		escore,
-// 		sscore,
-// 		(gscore = tscore * recip),
-// 		escore * recip,
-// 		sscore * recip,
-// 		gscore * recip;
+		if (tickers[ticker]["total"] != -1) {
+			escore += holdings[ticker] * tickers[ticker]["environmental"];
+			sscore += holdings[ticker] * tickers[ticker]["social"];
+			gscore += holdings[ticker] * tickers[ticker]["governance"];
+			tscore += holdings[ticker] * tickers[ticker]["total"];
+			percentage += holdings[ticker];
+		} else if (averageBySector[sector]) {
+			escore += holdings[ticker] * averageBySector[sector][0];
+			sscore += holdings[ticker] * averageBySector[sector][1];
+			gscore += holdings[ticker] * averageBySector[sector][2];
+			tscore += holdings[ticker] * averageBySector[sector][3];
+			percentage += holdings[ticker];
+		}
+	}
 
-// 	return res.json({
-// 		data: {
-// 			tscore,
-// 			escore,
-// 			sscore,
-// 			gscore,
-// 		},
-// 	});
-// });
+	const recip = percentage ? 1 / percentage : 1;
+	[tscore, escore, sscore, gscore] = [
+		tscore * recip,
+		escore * recip,
+		sscore * recip,
+		gscore * recip,
+	];
+
+	console.log({
+		data: {
+			tscore,
+			escore,
+			sscore,
+			gscore,
+		},
+	});
+
+	return res.json({
+		data: {
+			tscore,
+			escore,
+			sscore,
+			gscore,
+		},
+	});
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

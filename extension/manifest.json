@@ -1,18 +1,21 @@
 {
-    "manifest_version": 3,
-    "name": "ESG Ratings",
-    "version": "1.0",
-    "description": "Add the ESG ratings for companies as you search for them on Robinhood",
-    "permissions": ["activeTab"],
+	"manifest_version": 3,
+	"name": "ESG Ratings",
+	"version": "1.0",
+	"description": "Add the ESG ratings for companies as you search for them on Robinhood",
+	"permissions": ["activeTab"],
 
-    "content_scripts": [
-      {
-        "js": ["content.js"],
-        "css": ["style.css"],
-        "matches": [
-          "https://robinhood.com/stocks/*"
-        ],
-        "run_at": "document_end"
-      }
-    ]
-  }
+	"content_scripts": [
+		{
+			"js": ["content.js"],
+			"css": ["style.css"],
+			"matches": ["https://robinhood.com/stocks/*"],
+			"run_at": "document_end"
+		},
+		{
+			"js": ["portfolio.js"],
+			"matches": ["https://robinhood.com/account/investing"],
+			"run_at": "document_end"
+		}
+	]
+}
