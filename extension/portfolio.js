@@ -39,49 +39,27 @@ async function modifyElementContent() {
 		for (const ticker of Object.keys(holdings)) {
 			holdings[ticker] /= total;
 		}
-		console.log(holdings);
-		console.log(JSON.stringify(holdings));
-		const score = await getPortfolioScore(holdings);
-		console.log(score);
 
-		// Add portfolio score and any other DOM Elements
+		const res = await getPortfolioScore(holdings);
+		const { tscore, escore, sscore, gscore } = res.data;
+
+		// ADD DOM ELEMENTS TO SHOW SCORES
 	} catch (error) {
 		console.error("Error:", error.message);
 	}
 }
 async function getPortfolioScore(holdings) {
 	url = "https://rh-hackathon.uc.r.appspot.com/esg/portfolio";
-	return fetch(url, {
+	res = fetch(url, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({ holdings }),
 	});
+	response = await res;
+	return await response.json();
 }
-
-// function getPortfolioScore(holdings) {
-// 	return new Promise((resolve, reject) => {
-// 		const xhr = new XMLHttpRequest();
-// 		url = "https://rh-hackathon.uc.r.appspot.com/esg/portfolio";
-// 		xhr.open("POST", url, true);
-
-// 		xhr.onload = function () {
-// 			if (xhr.status === 200) {
-// 				const responseData = JSON.parse(xhr.responseText);
-// 				resolve(responseData["data"]);
-// 			} else {
-// 				reject(`Request failed with status ${xhr.status}`);
-// 			}
-// 		};
-
-// 		xhr.onerror = function () {
-// 			reject("Network error");
-// 		};
-
-// 		xhr.send();
-// 	});
-// }
 
 if (document.readyState === "loading") {
 	document.addEventListener("DOMContentLoaded", modifyElementContent);
