@@ -48,9 +48,14 @@ async function modifyElementContent() {
 
 		const esgDiv = document.createElement("div");
 		esgDiv.className = "portfolio-score";
+        esgDiv.style.marginTop = "16px";
 
 		const t = document.createElement("span");
-		t.textContent = `ESG: ${tscore?.toFixed(2)}`;
+		t.textContent = `Average ESG of Portfolio: ${tscore?.toFixed(2)}`;
+
+        const subScores = document.createElement("div");
+        subScores.className = "portfolio-score";
+
 		const e = document.createElement("span");
 		e.textContent = `(E: ${escore?.toFixed(2)}`;
 		const s = document.createElement("span");
@@ -65,14 +70,15 @@ async function modifyElementContent() {
 		}
 
 		esgDiv.appendChild(t);
-		esgDiv.appendChild(e);
-		esgDiv.appendChild(s);
-		esgDiv.appendChild(g);
+		subScores.appendChild(e);
+		subScores.appendChild(s);
+		subScores.appendChild(g);
 
 		const ele = [...document.querySelectorAll(".css-z4smye")].filter(
 			(el) => el.innerText == "Stocks"
 		)[0];
 		ele.insertBefore(esgDiv, ele.children[0]);
+        ele.appendChild(subScores);
 	} catch (error) {
 		console.error("Error:", error.message);
 	}
